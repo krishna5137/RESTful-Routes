@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const methodOverride = require('method-override');
 
 /**
  * To populate req-body
@@ -9,6 +10,7 @@ const { v4: uuidv4 } = require('uuid');
  */
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(methodOverride('_method'))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
@@ -43,7 +45,7 @@ app.get('/comments', (req, res) => {
 })
 
 /**
- * stage 1 of Post req....displays page to post a new comment
+ * stage 1 of create i.e Post req....displays page to post a new comment
  */
 app.get('/comments/new', (req, res) => {
     res.render('comments/new');
@@ -59,11 +61,31 @@ app.post('/comments', (req, res) => {
     res.redirect('/comments');
 })
 
+/**
+ * Read functionality by id for a detailed info
+ */
 app.get('/comments/:id', (req, res) => {
     const { id } = (req.params);
     const post = comments.find(c => c.id === id);
     console.log(post)
     res.render('comments/show', { post });
+})
+
+/**
+ * Update existing comments
+ */
+app.patch('/comments/:id', (req, res) => {
+    const { id } = req.params;
+    const post = comments.find(c => c.id === id)
+    editComment = req.body.comment;
+    post.comment = editComment;
+    res.redirect('/comments')
+})
+
+app.get('/comments/:id/edit', (req, res) => {
+    const { id } = req.params;
+    const post = comments.find(c => c.id === id);
+    res.render('comments/edit', { post })
 })
 
 app.get('/', (req, res) => {
