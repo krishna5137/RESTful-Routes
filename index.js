@@ -1,29 +1,35 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 /**
  * To populate req-body
  * urlencoded for form data....use .json() for json type data
  */
 app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
 const comments = [
     {
+        id: uuidv4(),
         username: 'skyler',
         comment: 'Someone has to protect this family from the man who protects this family.'
     },
     {
+        id: uuidv4(),
         username: 'walter-white',
         comment: 'I am the danger. A guy opens his door and gets shot, and you think that of me? No! I am the one who knocks!'
     },
     {
+        id: uuidv4(),
         username: 'jess@pinkman',
         comment: '“This is my own private domicile and I will not be harassed…b***h!”'
     },
     {
+        id: uuidv4(),
         username: 'hank',
         comment: 'Sometimes forbidden fruit tastes the sweetest.'
     }
@@ -49,22 +55,22 @@ app.get('/comments/new', (req, res) => {
  */
 app.post('/comments', (req, res) => {
     const { username, comment } = req.body;
-    comments.push({ username, comment });
+    comments.push({ id: uuidv4(), username, comment });
     res.redirect('/comments');
+})
+
+app.get('/comments/:id', (req, res) => {
+    const { id } = (req.params);
+    const post = comments.find(c => c.id === id);
+    console.log(post)
+    res.render('comments/show', { post });
 })
 
 app.get('/', (req, res) => {
     res.send('Inside the root of web app')
 })
 
-app.get('/tacos', (req, res) => {
-    res.send('get the /tacos response')
-})
 
-app.post('/tacos', (req, res) => {
-    const { meat, sauces, veggies } = req.body
-    res.send(`Here is your ${meat} taco with ${sauces} sauce and ${veggies}`)
-})
 
 app.listen(8080, () => {
     console.log("On port 8080!")
