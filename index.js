@@ -14,7 +14,7 @@ app.use(methodOverride('_method'))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
-const comments = [
+let comments = [
     {
         id: uuidv4(),
         username: 'skyler',
@@ -73,6 +73,7 @@ app.get('/comments/:id', (req, res) => {
 
 /**
  * Update existing comments
+ * stage 2
  */
 app.patch('/comments/:id', (req, res) => {
     const { id } = req.params;
@@ -82,17 +83,28 @@ app.patch('/comments/:id', (req, res) => {
     res.redirect('/comments')
 })
 
+/**
+ * Update existing comments
+ * stage 1 render a form to edit comments
+ */
 app.get('/comments/:id/edit', (req, res) => {
     const { id } = req.params;
     const post = comments.find(c => c.id === id);
     res.render('comments/edit', { post })
 })
 
+/**
+ * Delete a comment on the server by id
+ */
+app.delete('/comments/:id', (req, res) => {
+    const { id } = req.params;
+    comments = comments.filter(c => c.id !== id);
+    res.redirect('/comments')
+})
+
 app.get('/', (req, res) => {
     res.send('Inside the root of web app')
 })
-
-
 
 app.listen(8080, () => {
     console.log("On port 8080!")

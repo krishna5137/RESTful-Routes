@@ -7,8 +7,12 @@
 </head>
 <body>
     <h2>Comment id: <%= post.id %> </h2>
-    <h3><b> <%= post.username %> </b> -- <%= post.comment %> </h3>
+    <h3><b> <%= post.username %> </b> - <%= post.comment %> </h3>
     <a href="/comments">Index</a>
     <a href="/comments/<%= post.id %>/edit ">Edit</a>
+
+    <form action="/comments/<%= post.id %>?_method=DELETE " method="POST">
+        <button>Delete</button>
+    </form>
 </body>
 </html>
